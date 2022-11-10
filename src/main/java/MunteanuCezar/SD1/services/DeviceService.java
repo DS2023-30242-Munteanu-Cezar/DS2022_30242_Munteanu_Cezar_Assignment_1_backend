@@ -33,13 +33,13 @@ public class DeviceService {
 
     public Device dtoToDevice(DeviceDTO deviceDTO){
         List<Optional<Measurement>> measurements= new ArrayList<>();
-        deviceDTO.getMeasurementIds().stream().map(measurement -> measurements.add(measurementRepository.findById(measurement)));
-        List<Measurement> measurementList = null;
+        List<Measurement> measurementList = new ArrayList<>();
         for(Optional<Measurement> m : measurements){
             if(m.isPresent()){
                 measurementList.add(m.get());
             }
         }
+//        if (measurementList.isEmpty()
         Device device = Device.builder()
                 .user(userRepository.findByUsername(deviceDTO.getUserUsername()))
                 .energyConsumption(deviceDTO.getEnergyConsumption())
