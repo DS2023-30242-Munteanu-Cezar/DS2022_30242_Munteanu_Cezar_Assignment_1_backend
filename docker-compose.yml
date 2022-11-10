@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+
+  react:
+    image: fr-img
+    ports:
+      - "3000:3000"
+
+  demo-db:
+    image: postgres
+
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root"]
+      timeout: 45s
+      interval: 10s
+      retries: 5
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=city-db
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - "5435:5432"
+    container_name: demo-db
+
+  demo-be:
+    image: be-img
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      #- DB_IP=172.22.0.2
+      - DB_IP=demo-db
+      - RABBIT_IP=demo-rabbit
+      - DB_PORT=5432
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_DBNAME=city-db
+    container_name: demo-be
+    depends_on:
+      demo-db:
+        condition: service_healthy
