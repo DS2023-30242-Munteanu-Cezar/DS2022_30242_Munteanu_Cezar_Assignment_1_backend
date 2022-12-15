@@ -3,13 +3,14 @@ package MunteanuCezar.SD1.services;
 import MunteanuCezar.SD1.dtos.MeasurementDTO;
 import MunteanuCezar.SD1.entities.Device;
 import MunteanuCezar.SD1.entities.Measurement;
+import MunteanuCezar.SD1.rabbitMQ.Worker;
+import MunteanuCezar.SD1.rabbitMQ.entity.Measure;
 import MunteanuCezar.SD1.repositories.DeviceRepository;
 import MunteanuCezar.SD1.repositories.MeasurementRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,6 +24,29 @@ public class MeasurementService {
 
     @Autowired
     DeviceRepository deviceRepository;
+
+    @Autowired
+    public MeasurementService(MeasurementRepository measurementRepository, DeviceRepository deviceRepository){
+        this.measurementRepository = measurementRepository;
+        this.deviceRepository = deviceRepository;
+    }
+
+    public Device addMeasurementFromRabbitMQ(Measure measure){
+        Optional<Device> device = deviceRepository.findById(measure.getId());
+
+        if(!device.isPresent()){
+            log.error("Device with id " + measure.getId() + " not found in db!");
+        }
+
+        Measurement measurement = new Measurement();
+        measurement.setTimestamp(measure.getTimestamp());
+        measurement.setEnergyConsumption((int) measure.getConsumption());
+        measurement.setDevice(device.get());
+        measurementRepository.save(measurement);
+        log.info("Measurement inserted in database!");
+
+        return device.get();
+    }
 
     public Measurement dtoToMeasurement(MeasurementDTO measurementDTO){
 
