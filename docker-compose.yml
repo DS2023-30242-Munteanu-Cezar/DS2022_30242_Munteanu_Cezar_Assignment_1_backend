@@ -2,11 +2,6 @@ version: '3'
 
 services:
 
-  react:
-    image: fr-img
-    ports:
-      - "3000:3000"
-
   demo-db:
     image: postgres
 
@@ -22,7 +17,7 @@ services:
       - POSTGRES_DB=city-db
       - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
-      - "5435:5432"
+      - "5432:5432"
     container_name: demo-db
 
   demo-be:
