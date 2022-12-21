@@ -14,6 +14,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @SpringBootApplication
 public class Sd1Application {
@@ -32,19 +35,32 @@ public class Sd1Application {
 		SpringApplication.run(Sd1Application.class, args);
 	}
 
-//	@PostConstruct
-//	public void help(){
-//		Role role = new Role();
-//		role.setRoleCode("ADMIN");
-//		role.setRoleDescription("Admin of aplication!");
-//		roleRepository.save(role);
-//
-//		Role role2 = new Role();
-//		role2.setRoleCode("USER");
-//		role2.setRoleDescription("User of aplication!");
-//		roleRepository.save(role2);
-//
-//	}
+	@PostConstruct
+	public void help(){
+
+		List<Role> roles = new ArrayList<Role>();
+		roles = roleRepository.findAll();
+		boolean exist = false;
+
+		for(Role r : roles){
+			if(Objects.equals(r.getRoleCode(), "ADMIN") || Objects.equals(r.getRoleCode(), "USER")){
+				exist = true;
+			}
+		}
+
+		if(!exist) {
+			Role role = new Role();
+			role.setRoleCode("ADMIN");
+			role.setRoleDescription("Admin of aplication!");
+			roleRepository.save(role);
+
+			Role role2 = new Role();
+			role2.setRoleCode("USER");
+			role2.setRoleDescription("User of aplication!");
+			roleRepository.save(role2);
+		}
+
+	}
 
 	@PostConstruct
 	public void start(){
