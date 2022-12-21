@@ -1,5 +1,6 @@
 package MunteanuCezar.SD1.rabbitMQ.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -16,10 +17,13 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         config.setApplicationDestinationPrefixes("/app");
     }
 
+    @Value("${server.address}")
+    private String serverAddress;
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-message")
-                .setAllowedOrigins("http://localhost:3000")
+                .setAllowedOrigins( serverAddress + ":80")
                 .withSockJS();
     }
 
