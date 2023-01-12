@@ -1,2 +1,8 @@
-package MunteanuCezar.SD1.chat;public class Status {
+package MunteanuCezar.SD1.chat;
+
+
+public enum Status {
+    JOIN,
+    MESSAGE,
+    LEAVE
 }
